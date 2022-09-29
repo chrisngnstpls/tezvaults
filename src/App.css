@@ -1,38 +1,105 @@
-.App {
-  text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
 .App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1024px;
+  margin: 0px auto;
+  font-size: calc(10px + 2vmin);
+  /* background-color: #282c34; */
+  /* color: white; */
+  background-color: #fff;
+  color: #000;
+}
+
+.header-buttons {
   display: flex;
   flex-direction: column;
+}
+
+.header-buttons > * {
+  margin: 12px;
+}
+
+main {
+  background-color: white;
+  display: flex;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
 }
 
-.App-link {
-  color: #61dafb;
+main section {
+  width: 100%;
+  margin: 40px 0px;
+  max-width: 1024px;
+  border-radius: 8px;
+  box-shadow: 0 14px 48px rgba(0, 0, 0, 0.15), 0 10px 16px rgba(0, 0, 0, 0.12);
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+main section table {
+  padding: 40px 20px;
+  width: 100%;
+}
+
+main section .pad {
+  padding-left: 20px;
+  padding-top: 10px;
+  width: 100%;
+}
+
+.section-content {
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+main section table td,
+main section table th {
+  text-align: left;
+}
+
+.outlined {
+  color: rgb(var(--pure-material-dark, 0, 0, 0));
+  background-color: rgb(var(--pure-material-onprimary-rgb, 255, 255, 255));
+  /* border: 2px solid rgb(var(--pure-material-primary-rgb, 33, 150, 243)); */
+  border-radius: 8px;
+}
+
+textarea {
+  width: calc(100% - 32px);
+  max-width: calc(100% - 32px);
+
+  padding: 16px;
+  outline: none;
+  border: none;
+  background-color: transparent;
+  font-size: 0.85rem;
+}
+
+.textarea {
+  background-color: rgb(var(--pure-material-gray-rgb, 238, 238, 238));
+  border-radius: 8px;
+}
+
+.distribute-button {
+  margin-top: 24px;
+}
+
+.textarea-error {
+  color: red;
+  font-size: 0.75rem;
+  margin-top: 12px;
+}
+
+.fill-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.fill-form div {
+  margin-bottom: 12px;
+  max-width: 400px;
+}
+
+.fill-form label {
+  margin-right: 12px;
 }
