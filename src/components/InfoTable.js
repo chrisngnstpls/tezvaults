@@ -7,7 +7,7 @@ export const InfoTable = (props) => {
             <Table sx={{ minWidth: 650 }} size="small" stickyHeader aria-label="sticky table">
                 <TableHead>
                     <TableRow>
-                    <TableCell align="center" colSpan={5}>Vault ID : {props.name}</TableCell>
+                    <TableCell id='vault' align="center" colSpan={5}>Vault ID : {props.name}</TableCell>
                     </TableRow>
                     <TableRow>
                         <TableCell>Vault Info 1</TableCell>

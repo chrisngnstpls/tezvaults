@@ -95,47 +95,6 @@ export const CreateVault = () => {
     }
   }
 
-  const handleCreateVault = async () => {
-    try {
-      console.log(storage)
-      // const batch = await Tezos.wallet.batch()
-      //   .withContractCall(contract.methods.createVault())
-      // batch.send()
-    } catch(err){
-      console.log(err)
-    }
-    
-  }
-
-  const handleLockFunds = async () => {
-    try{
-      const batch = await Tezos.wallet.batch().withTransfer({to:vault, amount:amount})
-      const op = await batch.send()
-      await op.confirmation().then((conf)=>{
-        console.log('confirmed transaction to vault : ', conf)
-        if(conf.completed == true){
-          console.log('lock success')
-        } else {
-          console.log('lock failed')
-        }
-      })
-      
-    }catch(err){
-      console.log(err)
-    }
-  }
-
-  const handleDelegate = async () => {
-    try{
-      const vaultContract  = await Tezos.wallet.at(vault)
-      const batch = await Tezos.wallet.batch()
-      .withDelegation(vaultContract.methods.setDelegate(vault))
-      .send()
-    } catch(err){
-      console.log(err)
-    }
-  }
-
   const handleWithdraw = async () => {
     let today  = Date.now()
     let expiration = new Date(await unlockTime)
@@ -192,14 +151,190 @@ export const CreateVault = () => {
   },[remainingTime])
 
 
+  const loadManagerData = async () => {
+    try{
+      if (storage !== null){
+        const _storage = await contract.storage()
+        const details = await _storage.active_vault_owners.get(pkh)
+        const _managerTotalBalance = await new BigNumber(_storage.total_balance)
+        const _managerTotalShares = await new BigNumber(_storage.total_shares)
+        setManagerTotalBalance(_managerTotalBalance.toNumber())
+        setManagerTotalShares(_managerTotalShares.toNumber())
+        setVault(details[1])
+      }
+
+    }catch(err){
+      console.error(err)
+    }
+  }
+
+
+
+
+  const loadVaultData = async () => {
+    try{
+      if(vault !== null){
+        const _vaultContract = await Tezos.contract.at(vault)
+        setVaultContract(_vaultContract)
+      }
+    }catch(err){
+      console.error(err)
+    }
+  }
+
+  const loadVaultStorage = async () => {
+    try{
+      if(vaultContract !== null){
+        
+        const _vaultStorage = await vaultContract.storage()
+        setVaultStorage(await _vaultStorage)
+        setUnlockTime(await vaultStorage.unlock_time)
+        const shares = new BigNumber(await vaultStorage.shares)
+        const funds =  new BigNumber(await storage.penalty_funds_sum)
+        const factor = new BigNumber(await vaultStorage.penalty_factor)
+        setPenaltyFactor(factor.toNumber())
+        setPenaltyFunds(funds.toNumber()) 
+        setVaultShares(shares.toNumber())
+      }
+    }catch(err){
+      console.error(err)
+    }
+  }
+  const readStorage = async () => {
+    try{
+      await loadManagerData()
+      await loadVaultData()
+      await loadVaultStorage()
+      await calculateWithdraw()
+    }catch(err){
+      console.error(err)
+    }
+  }
+  // const readStorage = async () => {
+  //   try {
+  //     //const activeAcc = await wallet.getActiveAccount();
+  //     //console.log('active', activeAcc)
+  //     if (storage !== null) { 
+
+  //       const _storage = await contract.storage()
+  //       const details = await _storage.active_vault_owners.get(pkh)
+  //       const _managerTotalBalance = await new BigNumber(_storage.total_balance)
+  //       const _managerTotalShares = await new BigNumber(_storage.total_shares)
+  //       setManagerTotalBalance(_managerTotalBalance.toNumber())
+  //       setManagerTotalShares(_managerTotalShares.toNumber())
+  //       setVault(details[1])
+  //       if(vault !== null){
+  //         const _vaultContract = await Tezos.contract.at(details[1])
+  //         // console.log(await _vaultContract)
+  //         // console.log(contract)
+  //         setVaultContract(await _vaultContract)
+  //         if(vaultContract !== null){
+  //           const _vaultStorage = await vaultContract.storage()
+  //           setVaultStorage(_vaultStorage)
+  //           if (vaultStorage !== null){
+  //             setUnlockTime(vaultStorage.unlock_time)
+  //             const shares = await new BigNumber(vaultStorage.shares)
+  //             const funds = await new BigNumber(storage.penalty_funds_sum)
+  //             const factor = await new BigNumber(vaultStorage.penalty_factor)
+  //             setPenaltyFactor(factor.toNumber())
+  //             setPenaltyFunds(funds.toNumber()) 
+  //             setVaultShares(shares.toNumber())
+  //             calculateWithdraw()
+
+  
+  //           } else {
+  //             console.log('waiting for vault storage')
+  //           }     
+  //         } else {
+  //           console.log('waiting for vault')
+  //         }
+
+  //       }
+  //     } else {
+  //       console.log('waiting...')
+  //     }
+  //   } catch(err) {
+  //     console.log(err)
+  //   }
+  // }
+
+  const calculateWithdraw = async () => {
+    try{
+      console.log(vaultShares, managerTotalBalance, managerTotalShares)
+      if((vaultShares !== null) && (managerTotalBalance!== null) &&( managerTotalShares !== null)){
+        const claimables = (await vaultShares * await managerTotalBalance) / await managerTotalShares
+        console.log('totalClaimables : ', claimables)
+        setClaimable(claimables)
+      } else {
+        console.log('waiting for claimables')
+      }
+      
+      /***
+       * vault balance + claimable = (vault_shares * total_balance) / total_shares
+       * claimable_balance = (vault_balance + claimable) - current_vault_bal
+       */
+    } catch(err){
+      console.error(err)
+    }
+  }
+
+  const handleCreateVault = async () => {
+    try {
+      console.log(storage)
+      // const batch = await Tezos.wallet.batch()
+      //   .withContractCall(contract.methods.createVault())
+      // batch.send()
+    } catch(err){
+      console.log(err)
+    }
+    
+  }
+
+  const handleLockFunds = async () => {
+    try{
+      const batch = await Tezos.wallet.batch().withTransfer({to:vault, amount:amount})
+      const op = await batch.send()
+      await op.confirmation().then((conf)=>{
+        console.log('confirmed transaction to vault : ', conf)
+        if(conf.completed == true){
+          console.log('lock success')
+        } else {
+          console.log('lock failed')
+        }
+      })
+      
+    }catch(err){
+      console.log(err)
+    }
+  }
+
+  const handleDelegate = async () => {
+    try{
+      const vaultContract  = await Tezos.wallet.at(vault)
+      const batch = await Tezos.wallet.batch()
+      .withDelegation(vaultContract.methods.setDelegate(vault))
+      .send()
+    } catch(err){
+      console.log(err)
+    }
+  }
 
   useEffect(() => {
     if((vault == null) || (claimable == null) || (unlockTime == null)){
-      
+      readStorage()
     }
   },[readStorage])
 
+  // useEffect(() => {
+  //   if(maybeRefresh == true){
+  //     const update = async() => {
+  //       console.log('insideuseffect', maybeRefresh)
+  //       await readStorage().then(calculateWithdraw().then(setMaybeRefresh(true)))
+  //     }
+  //     update()
+  //   }
 
+  // },[maybeRefresh])
 
   if ((wallet != null) && (vaultStorage != null)){
 
