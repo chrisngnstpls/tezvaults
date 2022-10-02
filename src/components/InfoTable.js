@@ -10,9 +10,9 @@ export const InfoTable = (props) => {
                     <TableCell id='vault' align="center" colSpan={5}>Vault ID : {props.name}</TableCell>
                     </TableRow>
                     <TableRow>
-                        <TableCell>Vault Info 1</TableCell>
+                        <TableCell>Vault Balance</TableCell>
                         <TableCell>Time to unlock</TableCell>
-                        <TableCell>Balance</TableCell>
+                        <TableCell>Manager Balance</TableCell>
                         <TableCell>Total Claimable</TableCell>
                         <TableCell>Penalty Claims</TableCell>
                     </TableRow>

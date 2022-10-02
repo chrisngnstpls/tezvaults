@@ -1,9 +1,8 @@
 import { useCallback, useState, useEffect } from "react";
 import constate from "constate";
-import {BigNumber} from 'big-number'
 import { BeaconWallet } from "@taquito/beacon-wallet";
 import { MichelCodecPacker, MichelsonMap, TezosToolkit } from "@taquito/taquito";
-import { act } from "react-dom/test-utils";
+
 
 
 // TESTNET
@@ -28,7 +27,7 @@ import { act } from "react-dom/test-utils";
 //   rpcBaseURL: "https://mainnet-tezos.giganode.io",
 // };
 // GHOSTNET
-export const contractAddress = process.env.REACT_APP_VESTING_CONTRACT || "KT1Jcnv1koh2cUiaEubUK6y2ZRHdV9GZhQtG";
+export const contractAddress = process.env.REACT_APP_MANAGER_CONTRACT || "KT1Jcnv1koh2cUiaEubUK6y2ZRHdV9GZhQtG";
 
 const DEFAULT_NETWORK = {
     id: "ghostnet",
@@ -122,7 +121,8 @@ export const [UseBeaconProvider, useBeacon] = constate(() => {
     wallet,
     pkh,
     contract,
-    storage
+    storage,
+    contractAddress
   };
 });
 
