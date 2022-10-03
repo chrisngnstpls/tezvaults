@@ -1,121 +1,34 @@
-[
+{
+  "error": [
     {
-        "destination": "KT1Jcnv1koh2cUiaEubUK6y2ZRHdV9GZhQtG",
-        "kind": "transaction",
-        "amount": 0,
-        "parameters": {
-            "entrypoint": "createVault",
-            "value": {
-                "prim": "Unit"
-            }
+      "errors": [
+        {
+          "kind": "branch",
+          "id": "proto.014-PtKathma.contract.empty_transaction",
+          "contract": "tz1Ke2h7sDdakHJQh8WX4Z372du1KChsksyU"
         }
+      ],
+      "errorDetails": "Error occurred during estimation",
+      "name": "TezosOperationError",
+      "id": "proto.014-PtKathma.contract.empty_transaction",
+      "kind": "branch",
+      "message": "(branch) proto.014-PtKathma.contract.empty_transaction",
+      "isError": true
+    },
+    {
+      "errors": [
+        {
+          "kind": "branch",
+          "id": "proto.014-PtKathma.contract.empty_transaction",
+          "contract": "tz1Ke2h7sDdakHJQh8WX4Z372du1KChsksyU"
+        }
+      ],
+      "errorDetails": "Error occurred during estimation",
+      "name": "TezosOperationError",
+      "id": "proto.014-PtKathma.contract.empty_transaction",
+      "kind": "branch",
+      "message": "(branch) proto.014-PtKathma.contract.empty_transaction",
+      "isError": true
     }
-]
-
-{
-    "error": [
-        {
-            "errors": [
-                {
-                    "kind": "temporary",
-                    "id": "proto.014-PtKathma.michelson_v1.runtime_error",
-                    "contract_handle": "KT19jFcwQfdJ5zkdcfWfQ2XSPTzQGiz8YuAq",
-                    "contract_code": "Deprecated"
-                },
-                {
-                    "kind": "temporary",
-                    "id": "proto.014-PtKathma.michelson_v1.script_rejected",
-                    "location": 398,
-                    "with": {
-                        "string": "NO_WITHDRAW_PENALTY_AFTER_LOCK_PERIOD_END"
-                    }
-                }
-            ],
-            "errorDetails": "Error occurred during estimation",
-            "name": "TezosOperationError",
-            "id": "proto.014-PtKathma.michelson_v1.script_rejected",
-            "kind": "temporary",
-            "message": "NO_WITHDRAW_PENALTY_AFTER_LOCK_PERIOD_END",
-            "isError": true
-        },
-        {
-            "errors": [
-                {
-                    "kind": "temporary",
-                    "id": "proto.014-PtKathma.michelson_v1.runtime_error",
-                    "contract_handle": "KT19jFcwQfdJ5zkdcfWfQ2XSPTzQGiz8YuAq",
-                    "contract_code": "Deprecated"
-                },
-                {
-                    "kind": "temporary",
-                    "id": "proto.014-PtKathma.michelson_v1.script_rejected",
-                    "location": 398,
-                    "with": {
-                        "string": "NO_WITHDRAW_PENALTY_AFTER_LOCK_PERIOD_END"
-                    }
-                }
-            ],
-            "errorDetails": "Error occurred during estimation",
-            "name": "TezosOperationError",
-            "id": "proto.014-PtKathma.michelson_v1.script_rejected",
-            "kind": "temporary",
-            "message": "NO_WITHDRAW_PENALTY_AFTER_LOCK_PERIOD_END",
-            "isError": true
-        }
-    ]
-}
-
-{
-    "error": [
-        {
-            "status": 404,
-            "statusText": "",
-            "body": "",
-            "url": "https://uoi3x99n7c.ghostnet.tezosrpc.midl.dev/chains/main/blocks/BKkP5suWEXQzNuWQ7kzXZthRBhPg3tx2xAb7zULAW2fyRMGPF7m/context/contracts/tz1PV88ba2NisdX3LYeuCPuA43oF5VnL7u7k/balance",
-            "name": "HttpResponse",
-            "isError": true
-        },
-        {
-            "status": 404,
-            "statusText": "",
-            "body": "",
-            "url": "https://uoi3x99n7c.ghostnet.tezosrpc.midl.dev/chains/main/blocks/BKkP5suWEXQzNuWQ7kzXZthRBhPg3tx2xAb7zULAW2fyRMGPF7m/context/contracts/tz1PV88ba2NisdX3LYeuCPuA43oF5VnL7u7k/balance",
-            "name": "HttpResponse",
-            "isError": true
-        }
-    ]
-}
-{
-    "error": [
-        {
-            "errors": [
-                {
-                    "kind": "branch",
-                    "id": "proto.014-PtKathma.contract.empty_transaction",
-                    "contract": "tz1Ke2h7sDdakHJQh8WX4Z372du1KChsksyU"
-                }
-            ],
-            "errorDetails": "Error occurred during estimation",
-            "name": "TezosOperationError",
-            "id": "proto.014-PtKathma.contract.empty_transaction",
-            "kind": "branch",
-            "message": "(branch) proto.014-PtKathma.contract.empty_transaction",
-            "isError": true
-        },
-        {
-            "errors": [
-                {
-                    "kind": "branch",
-                    "id": "proto.014-PtKathma.contract.empty_transaction",
-                    "contract": "tz1Ke2h7sDdakHJQh8WX4Z372du1KChsksyU"
-                }
-            ],
-            "errorDetails": "Error occurred during estimation",
-            "name": "TezosOperationError",
-            "id": "proto.014-PtKathma.contract.empty_transaction",
-            "kind": "branch",
-            "message": "(branch) proto.014-PtKathma.contract.empty_transaction",
-            "isError": true
-        }
-    ]
+  ]
 }

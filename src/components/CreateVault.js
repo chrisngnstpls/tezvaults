@@ -2,14 +2,15 @@ import React, { useEffect, useState, useCallback } from "react";
 import BigNumber from "bignumber.js";
 import useBeacon, { contractAddress } from "../hooks/useBeacon";
 import { Button } from "./Button";
-import { MichelsonMap, TezosToolkit } from "@taquito/taquito";
+
 import { validateAddress } from "@taquito/utils"
 import { Divider, Typography, Card, CardActions, CardContent, Table, TableBody, TableCell,TableContainer, TableHead,TableRow, Paper, Grid, Unstable_Grid2,Box } from "@mui/material";
 import { InfoTable } from "./InfoTable";
 import { FirstTime } from "./FirstTime";
 import { Topbar } from "./Topbar";
-import axios, { Axios } from "axios";
-import { MessageBar } from "./MessageBar";
+import axios from "axios";
+import MessageBar  from "./MessageBar";
+
 
 
 
@@ -34,10 +35,15 @@ export const CreateVault = () => {
   const [maybeRefresh, setMaybeRefresh] = useState(false)
   const [res, setRes] = useState(null)
 
-  const VAULT_URL = `https://api.ghostnet.tzkt.io/v1/contracts/${vault}/storage`
-  const MANAGER_URL = `https://api.ghostnet.tzkt.io/v1/contracts/${contractAddress}/storage`
-  const VAULT_BALANCE_URL = `https://api.ghostnet.tzkt.io/v1/accounts/${vault}/balance`
+  // const VAULT_URL = `https://api.ghostnet.tzkt.io/v1/contracts/${vault}/storage`
+  // const MANAGER_URL = `https://api.ghostnet.tzkt.io/v1/contracts/${contractAddress}/storage`
+  // const VAULT_BALANCE_URL = `https://api.ghostnet.tzkt.io/v1/accounts/${vault}/balance`
   
+  
+  const VAULT_URL = `https://api.kathmandunet.tzkt.io/v1/contracts/${vault}/storage`
+  const MANAGER_URL = `https://api.kathmandunet.tzkt.io/v1/contracts/${contractAddress}/storage`
+  const VAULT_BALANCE_URL = `https://api.kathmandunet.tzkt.io/v1/accounts/${vault}/balance`
+
   var one_day=1000*60*60*24;
 
 
@@ -73,42 +79,68 @@ export const CreateVault = () => {
 
 
   const readVaultStorage = async () => {
-    axios.get(VAULT_URL)
-    .then((response) => {
-      
-      const _res = response.data
-      //let unlockDate = new Date(_res.unlock_time)
-      setVaultStorage(_res.data)
-      setVaultShares(_res.shares)
-      setUnlockTime(_res.unlock_time)
-      axios.get(VAULT_BALANCE_URL).then((balance_response) =>{
-        let _balance = balance_response.data
-        setVaultBalance(_balance)
+    console.log('vault', vault)
+    if(contract!==null){
+      try{
+        const _storage = await contract.storage()
+        const details = await _storage.active_vault_owners.get(pkh)
+        console.log(details)
+        if(details){
+          setVault(details[1])
+        } else {
+          setVault(null)
+        }
+        console.log(details)
+      }catch(err){
+        console.error(err)
+      }
+    }
+    if(vault !== null){
+      axios.get(VAULT_URL)
+      .then((response) => {
+        
+        const _res = response.data
+        //let unlockDate = new Date(_res.unlock_time)
+        setVaultStorage(_res.data)
+        setVaultShares(_res.shares)
+        setUnlockTime(_res.unlock_time)
+        axios.get(VAULT_BALANCE_URL).then((balance_response) =>{
+          let _balance = balance_response.data
+          setVaultBalance(_balance / 1000000)
+        })
+        // const _vaultContract = Tezos.contract.at(vault)
+        // setVaultContract(_vaultContract)
+        //console.log(_res)
       })
-      // const _vaultContract = Tezos.contract.at(vault)
-      // setVaultContract(_vaultContract)
-      //console.log(_res)
-    })
-    .catch(err => console.error(err))
+      .catch(err => console.error(err))
+    }
+
   }
   const readManagerStorage = async () => {
     if(contract!==null){
-
-      const _storage = await contract.storage()
-      const details = await _storage.active_vault_owners.get(pkh)
-      setVault(details[1])
-      setUserMessage(details[1])
+      
+      // const _storage = await contract.storage()
+      // const details = await _storage.active_vault_owners.get(pkh)
+      // console.log('novault', details)
+      // if(details[1].length > 10){
+      //   setVault(details[1])
+      // } else {
+      //   setVault('newuser')
+      // }
+      // const details = await _storage.active_vault_owners.get(pkh)
+      // setVault(details[1])
+      //setUserMessage(details[1])
       // console.log(vault)
       // console.log("contract :", contract)
       axios.get(MANAGER_URL)
       .then((response) => {
         const _res = response.data
-        // console.log(
-        //   _res.total_balance,
-        //   _res.total_shares,
-        //   _res.penalty_factor
-        // )
-        setManagerTotalBalance(_res.total_balance)
+        console.log(
+          _res.total_balance,
+          _res.total_shares,
+          _res.penalty_factor
+        )
+        setManagerTotalBalance(_res.total_balance / 1000000)
         setManagerTotalShares(_res.total_shares)
         setPenaltyFactor(_res.penalty_factor)
         setPenaltyFunds(_res.penalty_funds_sum)
@@ -121,15 +153,15 @@ export const CreateVault = () => {
   
   const handleClaim = async () => {
     try{
-
+      setUserMessage('')
       const batch = await Tezos.wallet.batch()
       .withContractCall(vaultContract.methods.claim())
       let _op = await batch.send()
       await _op.confirmation().then((conf) => {
         if(conf.completed == true){
-          setUserMessage('Claim complete!')
+          setUserMessage('Claim success!')
         } else {
-          setUserMessage('Claim Failed!')
+          setUserMessage('Claim failed!')
         } 
       })
     }catch(err){
@@ -140,15 +172,17 @@ export const CreateVault = () => {
 
   const handleLockFunds = async () => {
     try{
+      setUserMessage('')
       const batch = await Tezos.wallet.batch().withTransfer({to:vault, amount:amount})
       const op = await batch.send()
-      await op.confirmation().then(conf=>{
+      await op.confirmation().then((conf)=>{
         console.log('confirmed transaction to vault : ', conf);
         if(conf.completed == true){
-
-          setUserMessage('Lock Complete!')
+          //setUserMessage('Lock complete!')
+          
+          setUserMessage('Lock Success!')
         } else {
-          setUserMessage('Lock Failed!');
+          setUserMessage('Lock failed!')
         }
       })
       
@@ -159,6 +193,7 @@ export const CreateVault = () => {
 
   const handleDelegate = async () => {
     try{
+      setUserMessage('')
       const vaultContract  = await Tezos.wallet.at(vault)
       if (receiver.length>0){
         let verification = validateAddress(receiver)
@@ -168,10 +203,10 @@ export const CreateVault = () => {
           const op = await batch.send()
           const _confirm = op.confirmation().then((conf) => {
             if(conf.completed == true){
-              setUserMessage('Delegation Complete!');
+              setUserMessage('Delegation Success!');
               console.log('delegation success', conf);
             } else {
-              setUserMessage('Delegation Failed!')
+              setUserMessage('Delegation Failed!');
             }
           })
 
@@ -181,9 +216,9 @@ export const CreateVault = () => {
         const op = await batch.send()
         const _confirm = op.confirmation().then((conf) => {
           if(conf.completed == true){
-            setUserMessage('Undelegation complete!')
+            setUserMessage('Undelegation Success!');
           } else {
-            setUserMessage('Undelegation Failed!')
+            setUserMessage('Undelegation Failed!');
           }
 
         })
@@ -192,8 +227,33 @@ export const CreateVault = () => {
       console.log(err)
     }
   }
+  const calculateTime = async () => {
+    try {
+      if(unlockTime!==null){
+        let today = Date.now()
+        let expiration = await new Date(unlockTime)
+        let diff = (expiration - today)
+        if(diff < 0 ){
+          console.log('expired', diff )
+          let exp = (diff/one_day).toFixed(2)
+          setRemainingTime('Vault Unlocked !')
+        } else if(diff > 0){
+          console.log('not expired', diff)
+          let exp = (diff/one_day).toFixed(2)
+          let msg = exp.toString() + ' days'
+          setRemainingTime(msg)
+        } else {
+          console.log('errors')
+        }    
+      }
+    } catch(err){
+      console.err(err)
+    }    
+
+  }
 
   const handleWithdraw = async () => {
+    setUserMessage('')
     let today  = Date.now()
     let expiration = new Date(unlockTime)
 
@@ -206,10 +266,10 @@ export const CreateVault = () => {
         await op.confirmation().then((conf) => {
           if(conf.completed == true){
             console.log('withdrawal confirmed :', conf)
-            setUserMessage('Withdrawal complete!')
+            setUserMessage('Withdraw Success!');
             setVault(null)
           } else {
-            setUserMessage('Withdrawal failed!')
+            setUserMessage('Withdraw Failed!');
           }
         })
       }catch(err){
@@ -223,9 +283,10 @@ export const CreateVault = () => {
         const op = await batch.send()
         await op.confirmation().then(async (conf) => {
           if(conf.completed == true){
-            setUserMessage('Withdrawal with penalty complete!')
+            setUserMessage('Withdrawal with penalty complete!');
+
           } else {
-            setUserMessage('Withdrawal with penalty failed!')
+            setUserMessage('Withdrawal with penalty failed!');
           }
         })
       } catch(err){
@@ -240,7 +301,7 @@ export const CreateVault = () => {
       //console.log(vaultShares, managerTotalBalance, managerTotalShares)
       if((vaultShares !== null) && (managerTotalBalance!== null) &&( managerTotalShares !== null)){
         const claimables = (vaultShares *managerTotalBalance) / managerTotalShares
-        const vaultForClaim = claimable - vaultBalance
+        const vaultForClaim = (claimables - vaultBalance) / 1000000
         //console.log('totalClaimables : ', claimables)
         if (vaultForClaim <= 0){
           setClaimable(0)
@@ -278,6 +339,7 @@ export const CreateVault = () => {
         if(pkh!==''){
           await readManagerStorage()
           await readVaultStorage()
+          await calculateTime()
           await calculateWithdraw()
           await loadVaultData()
         } else {
@@ -306,36 +368,6 @@ export const CreateVault = () => {
     }
   })
 
-
-
-
-  // return (
-  //   <section>
-  //     <div>HERE COME TEH VARIABLES</div>
-  //     <div>{managerTotalShares}</div>
-  //     <div>{managerTotalBalance}</div>
-  //     <div>{penaltyFactor}</div>
-  //     <div>{vaultShares}</div>
-  //     <div>{managerTotalBalance}</div>
-  //     <div>{penaltyFactor}</div>
-  //     <div>{claimable}</div>
-
-  //     <Button
-  //     //disabled={storage && pkh !== storage.admin}
-  //     onClick={readManagerStorage}
-  //     className="distribute-button"
-  //     >
-  //     manger
-  //     </Button>
-  //     <Button
-  //     //disabled={storage && pkh !== storage.admin}
-  //     onClick={readVaultStorage}
-  //     className="distribute-button"
-  //     >
-  //     vault
-  //     </Button>
-  //   </section>
-  // )
   if (vault!==null){
 
     return (
@@ -345,7 +377,7 @@ export const CreateVault = () => {
           <InfoTable 
             name={vault}
             info={vaultBalance}
-            timer={unlockTime}
+            timer={remainingTime}
             balance={managerTotalBalance}
             totalClaimable={claimable}
             fromPenalties={penaltyFunds}
@@ -380,6 +412,7 @@ export const CreateVault = () => {
                   Lock funds
                 </Button>
                 </CardActions>
+                
             </CardContent>
             </Card>            
             </div>
@@ -469,8 +502,8 @@ export const CreateVault = () => {
           </Grid>          
           </Box>
           <Divider/>
-          <MessageBar message={userMessage}/>
-        </div>
+          {userMessage ? <MessageBar key={Math.random} incoming={userMessage} /> : null}
+          </div>
       </section>
     );
   } else if (pkh !== '' && vault == null) {

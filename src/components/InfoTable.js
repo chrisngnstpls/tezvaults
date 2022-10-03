@@ -1,14 +1,17 @@
 import React from "react";
-import { Table, TableBody, TableCell,TableContainer, TableHead,TableRow, Paper } from "@mui/material";
+import { Table, TableBody, TableCell,TableContainer, TableHead,TableRow, Paper,Typography} from "@mui/material";
 
 export const InfoTable = (props) => {
-    let linkOut = `https://ghostnet.tzkt.io/${props.name}/storage/`
+    //let linkOut = `https://ghostnet.tzkt.io/${props.name}/storage/`
+    let linkOut = `https://kathmandunet.tzkt.io/${props.name}/storage/`
+
+
     return(
         <TableContainer component={Paper}>
             <Table sx={{ minWidth: 650 }} size="small" stickyHeader aria-label="sticky table">
                 <TableHead>
                     <TableRow>
-                    <TableCell align='center' id='vault' colSpan={5}>Vault ID : <a target='_blank' href={linkOut}>{props.name}</a></TableCell>
+                    <TableCell align='center' id='vault' colSpan={5}><Typography variant="h6" component='h5'> Vault : <a target='_blank' href={linkOut}>{props.name}</a></Typography></TableCell>
                     </TableRow>
                     <TableRow>
                         <TableCell>Vault Balance</TableCell>
@@ -22,8 +25,8 @@ export const InfoTable = (props) => {
                     <TableRow>
                         <TableCell>{props.info}</TableCell>
                         <TableCell>{props.timer}</TableCell>
-                        <TableCell>{props.balance}</TableCell>
-                        <TableCell>{props.totalClaimable}</TableCell>
+                        <TableCell>{props.balance} ETH</TableCell>
+                        <TableCell>{props.totalClaimable} ETH</TableCell>
                         <TableCell>{props.fromPenalties}</TableCell>
                     </TableRow>
                 </TableBody>

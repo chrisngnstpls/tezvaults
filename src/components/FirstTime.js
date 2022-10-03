@@ -19,7 +19,6 @@ export const FirstTime = () => {
           const op = await batch.send()
           const confirm = await op.confirmation().then((conf) => {refreshPage()})
 
-          // const confirm = await batch.confirmation()
           console.log(await confirm)
         } catch(err){
           console.log(err)

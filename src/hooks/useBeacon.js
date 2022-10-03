@@ -27,14 +27,24 @@ import { MichelCodecPacker, MichelsonMap, TezosToolkit } from "@taquito/taquito"
 //   rpcBaseURL: "https://mainnet-tezos.giganode.io",
 // };
 // GHOSTNET
-export const contractAddress = process.env.REACT_APP_MANAGER_CONTRACT || "KT1Jcnv1koh2cUiaEubUK6y2ZRHdV9GZhQtG";
+// export const contractAddress = process.env.REACT_APP_MANAGER_CONTRACT || "KT1Jcnv1koh2cUiaEubUK6y2ZRHdV9GZhQtG";
+
+// const DEFAULT_NETWORK = {
+//     id: "ghostnet",
+//     nextNetworkIndex: 1,
+//     name: "Ghostnet",
+//     type: "test",
+//     rpcBaseURL: "	https://rpc.ghostnet.teztnets.xyz"
+// };
+// KATHMANDUNET
+export const contractAddress = process.env.REACT_APP_MANAGER_CONTRACT_KATHMANDUNET || "KT1Gv2sLwUk1ubP746n5BNKyexZP5RUUaS7P";
 
 const DEFAULT_NETWORK = {
-    id: "ghostnet",
+    id: "kathmandunet",
     nextNetworkIndex: 1,
-    name: "Ghostnet",
+    name: "Kathmandunet",
     type: "test",
-    rpcBaseURL: "	https://rpc.ghostnet.teztnets.xyz"
+    rpcBaseURL: "https://rpc.kathmandunet.teztnets.xyz/"
 };
 
 class LambdaViewSigner {
