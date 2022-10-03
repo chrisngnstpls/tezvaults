@@ -9,6 +9,7 @@ import { InfoTable } from "./InfoTable";
 import { FirstTime } from "./FirstTime";
 import { Topbar } from "./Topbar";
 import axios, { Axios } from "axios";
+import { MessageBar } from "./MessageBar";
 
 
 
@@ -28,6 +29,7 @@ export const CreateVault = () => {
   const [managerTotalBalance, setManagerTotalBalance] = useState(null)
   const [managerTotalShares, setManagerTotalShares] = useState(null)
   const [claimable, setClaimable] = useState(null)
+  const [userMessage, setUserMessage] = useState('')
   const [remainingTime, setRemainingTime] = useState(null)
   const [maybeRefresh, setMaybeRefresh] = useState(false)
   const [res, setRes] = useState(null)
@@ -49,6 +51,8 @@ export const CreateVault = () => {
       deadline: "",
     });
 
+
+
   const handleChange = (e) => {
     handleFormValue(e.target.name, e.target.value);
   };
@@ -67,6 +71,7 @@ export const CreateVault = () => {
     }
   };
 
+
   const readVaultStorage = async () => {
     axios.get(VAULT_URL)
     .then((response) => {
@@ -82,7 +87,7 @@ export const CreateVault = () => {
       })
       // const _vaultContract = Tezos.contract.at(vault)
       // setVaultContract(_vaultContract)
-      console.log(_res)
+      //console.log(_res)
     })
     .catch(err => console.error(err))
   }
@@ -92,16 +97,17 @@ export const CreateVault = () => {
       const _storage = await contract.storage()
       const details = await _storage.active_vault_owners.get(pkh)
       setVault(details[1])
-      console.log(vault)
-      console.log("contract :", contract)
+      setUserMessage(details[1])
+      // console.log(vault)
+      // console.log("contract :", contract)
       axios.get(MANAGER_URL)
       .then((response) => {
         const _res = response.data
-        console.log(
-          _res.total_balance,
-          _res.total_shares,
-          _res.penalty_factor
-        )
+        // console.log(
+        //   _res.total_balance,
+        //   _res.total_shares,
+        //   _res.penalty_factor
+        // )
         setManagerTotalBalance(_res.total_balance)
         setManagerTotalShares(_res.total_shares)
         setPenaltyFactor(_res.penalty_factor)
@@ -119,34 +125,30 @@ export const CreateVault = () => {
       const batch = await Tezos.wallet.batch()
       .withContractCall(vaultContract.methods.claim())
       let _op = await batch.send()
-      await _op.confirmation().then(console.log('done claiming'))
+      await _op.confirmation().then((conf) => {
+        if(conf.completed == true){
+          setUserMessage('Claim complete!')
+        } else {
+          setUserMessage('Claim Failed!')
+        } 
+      })
     }catch(err){
       console.log(err)
     }
   }
 
-  const handleCreateVault = async () => {
-    try {
-      console.log(storage)
-      // const batch = await Tezos.wallet.batch()
-      //   .withContractCall(contract.methods.createVault())
-      // batch.send()
-    } catch(err){
-      console.log(err)
-    }
-    
-  }
 
   const handleLockFunds = async () => {
     try{
       const batch = await Tezos.wallet.batch().withTransfer({to:vault, amount:amount})
       const op = await batch.send()
-      await op.confirmation().then((conf)=>{
-        console.log('confirmed transaction to vault : ', conf)
+      await op.confirmation().then(conf=>{
+        console.log('confirmed transaction to vault : ', conf);
         if(conf.completed == true){
-          console.log('lock success')
+
+          setUserMessage('Lock Complete!')
         } else {
-          console.log('lock failed')
+          setUserMessage('Lock Failed!');
         }
       })
       
@@ -158,9 +160,34 @@ export const CreateVault = () => {
   const handleDelegate = async () => {
     try{
       const vaultContract  = await Tezos.wallet.at(vault)
-      const batch = await Tezos.wallet.batch()
-      .withDelegation(vaultContract.methods.setDelegate(vault))
-      .send()
+      if (receiver.length>0){
+        let verification = validateAddress(receiver)
+        if(verification === 3){
+          const batch = await Tezos.wallet.batch()
+          .withContractCall(vaultContract.methods.setDelegate(receiver))
+          const op = await batch.send()
+          const _confirm = op.confirmation().then((conf) => {
+            if(conf.completed == true){
+              setUserMessage('Delegation Complete!');
+              console.log('delegation success', conf);
+            } else {
+              setUserMessage('Delegation Failed!')
+            }
+          })
+
+        }
+      } else if (receiver.length === 0){
+        const batch = await Tezos.wallet.batch().withContractCall(vaultContract.methods.setDelegate())
+        const op = await batch.send()
+        const _confirm = op.confirmation().then((conf) => {
+          if(conf.completed == true){
+            setUserMessage('Undelegation complete!')
+          } else {
+            setUserMessage('Undelegation Failed!')
+          }
+
+        })
+      }
     } catch(err){
       console.log(err)
     }
@@ -177,8 +204,13 @@ export const CreateVault = () => {
         .withContractCall(vaultContract.methods.withdrawAll())
         const op = await batch.send()
         await op.confirmation().then((conf) => {
-          console.log('withdrawal confirmed :', conf)
-          setVault(null)
+          if(conf.completed == true){
+            console.log('withdrawal confirmed :', conf)
+            setUserMessage('Withdrawal complete!')
+            setVault(null)
+          } else {
+            setUserMessage('Withdrawal failed!')
+          }
         })
       }catch(err){
         console.log(err)
@@ -190,8 +222,11 @@ export const CreateVault = () => {
         .withContractCall(vaultContract.methods.withdrawAllWithPenalty())
         const op = await batch.send()
         await op.confirmation().then(async (conf) => {
-          console.log('penalty withdrawal confirmed :', conf)
-          setMaybeRefresh(true)
+          if(conf.completed == true){
+            setUserMessage('Withdrawal with penalty complete!')
+          } else {
+            setUserMessage('Withdrawal with penalty failed!')
+          }
         })
       } catch(err){
         console.error(err)
@@ -202,11 +237,11 @@ export const CreateVault = () => {
 
   const calculateWithdraw = async () => {
     try{
-      console.log(vaultShares, managerTotalBalance, managerTotalShares)
+      //console.log(vaultShares, managerTotalBalance, managerTotalShares)
       if((vaultShares !== null) && (managerTotalBalance!== null) &&( managerTotalShares !== null)){
         const claimables = (vaultShares *managerTotalBalance) / managerTotalShares
         const vaultForClaim = claimable - vaultBalance
-        console.log('totalClaimables : ', claimables)
+        //console.log('totalClaimables : ', claimables)
         if (vaultForClaim <= 0){
           setClaimable(0)
         }else {
@@ -253,6 +288,7 @@ export const CreateVault = () => {
       }
     }
     const interval = setInterval(() => {
+      console.log('updating...')
       setTimers()
     },5000)
     return () => clearInterval(interval)
@@ -432,6 +468,8 @@ export const CreateVault = () => {
           </Grid>
           </Grid>          
           </Box>
+          <Divider/>
+          <MessageBar message={userMessage}/>
         </div>
       </section>
     );

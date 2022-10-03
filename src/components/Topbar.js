@@ -1,13 +1,13 @@
 import React from "react";
-import { AppBar, Box, Toolbar, IconButton, Typography, Menu, MenuIcon, Container, Avatar, MenuItem,AdbIcon, Icon } from "@mui/material";
+import { AppBar, Box, Toolbar, IconButton, Typography, Paper, MenuIcon, Container, Avatar, MenuItem,AdbIcon, Icon } from "@mui/material";
 
 
 export const Topbar = () => {
 
   return (
     <section>
-        <Container>
-            <Toolbar variant="dense">
+        <Container component={Paper}>
+            <Toolbar  variant="dense">
             <img style={{padding:'10px'}}src="./images/vaultsIcon.jpg" alt='vault' height='35' width='35'/>
                 <Typography
                     variant='h6'
@@ -16,7 +16,7 @@ export const Topbar = () => {
                     href="/"
                     sx={{
                         mr: 2,
-                        display: { xs: 'none', md: 'flex' },
+                        display: { xs: '1', md: 'flex' },
                         fontFamily: 'monospace',
                         fontWeight: 700,
                         letterSpacing: '.3rem',
