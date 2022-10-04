@@ -1,7 +1,7 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React from "react";
 import {Card, CardActions, CardContent, Typography, CardMedia} from "@mui/material"
 import { Button } from "./Button";
-import useBeacon, { contractAddress } from "../hooks/useBeacon";
+import useBeacon from "../hooks/useBeacon";
 
 export const FirstTime = () => {
     const { contract, storage, pkh, Tezos, wallet } = useBeacon();

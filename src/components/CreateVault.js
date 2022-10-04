@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useCallback } from "react";
-import BigNumber from "bignumber.js";
+import React, { useEffect, useState } from "react";
+
 import useBeacon, { contractAddress } from "../hooks/useBeacon";
 import { Button } from "./Button";
 
@@ -33,8 +33,8 @@ export const CreateVault = () => {
   const [claimable, setClaimable] = useState(null)
   const [userMessage, setUserMessage] = useState('')
   const [remainingTime, setRemainingTime] = useState(null)
-  const [maybeRefresh, setMaybeRefresh] = useState(false)
-  const [res, setRes] = useState(null)
+
+
 
   // const VAULT_URL = `https://api.ghostnet.tzkt.io/v1/contracts/${vault}/storage`
   // const MANAGER_URL = `https://api.ghostnet.tzkt.io/v1/contracts/${contractAddress}/storage`
@@ -80,18 +80,17 @@ export const CreateVault = () => {
 
 
   const readVaultStorage = async () => {
-    console.log('vault', vault)
     if(contract!==null){
       try{
         const _storage = await contract.storage()
         const details = await _storage.active_vault_owners.get(pkh)
-        console.log(details)
+
         if(details){
           setVault(details[1])
         } else {
           setVault(null)
         }
-        console.log(details)
+
       }catch(err){
         console.error(err)
       }
@@ -101,7 +100,7 @@ export const CreateVault = () => {
       .then((response) => {
         
         const _res = response.data
-        //let unlockDate = new Date(_res.unlock_time)
+
         setVaultStorage(_res.data)
         setVaultShares(_res.shares)
         setUnlockTime(_res.unlock_time)
@@ -109,9 +108,7 @@ export const CreateVault = () => {
           let _balance = balance_response.data
           setVaultBalance(_balance / 1000000)
         })
-        // const _vaultContract = Tezos.contract.at(vault)
-        // setVaultContract(_vaultContract)
-        //console.log(_res)
+
       })
       .catch(err => console.error(err))
     }
@@ -120,27 +117,14 @@ export const CreateVault = () => {
   const readManagerStorage = async () => {
     if(contract!==null){
       
-      // const _storage = await contract.storage()
-      // const details = await _storage.active_vault_owners.get(pkh)
-      // console.log('novault', details)
-      // if(details[1].length > 10){
-      //   setVault(details[1])
-      // } else {
-      //   setVault('newuser')
-      // }
-      // const details = await _storage.active_vault_owners.get(pkh)
-      // setVault(details[1])
-      //setUserMessage(details[1])
-      // console.log(vault)
-      // console.log("contract :", contract)
       axios.get(MANAGER_URL)
       .then((response) => {
         const _res = response.data
-        console.log(
-          _res.total_balance,
-          _res.total_shares,
-          _res.penalty_factor
-        )
+        // console.log(
+        //   _res.total_balance,
+        //   _res.total_shares,
+        //   _res.penalty_factor
+        // )
         setManagerTotalBalance(_res.total_balance / 1000000)
         setManagerTotalShares(_res.total_shares)
         setPenaltyFactor(_res.penalty_factor)
@@ -159,7 +143,7 @@ export const CreateVault = () => {
       .withContractCall(vaultContract.methods.claim())
       let _op = await batch.send()
       await _op.confirmation().then((conf) => {
-        if(conf.completed == true){
+        if(conf.completed === true){
           setUserMessage('Claim success!')
         } else {
           setUserMessage('Claim failed!')
@@ -178,7 +162,7 @@ export const CreateVault = () => {
       const op = await batch.send()
       await op.confirmation().then((conf)=>{
         console.log('confirmed transaction to vault : ', conf);
-        if(conf.completed == true){
+        if(conf.completed === true){
           //setUserMessage('Lock complete!')
           
           setUserMessage('Lock Success!')
@@ -203,7 +187,7 @@ export const CreateVault = () => {
           .withContractCall(vaultContract.methods.setDelegate(receiver))
           const op = await batch.send()
           const _confirm = op.confirmation().then((conf) => {
-            if(conf.completed == true){
+            if(conf.completed === true){
               setUserMessage('Delegation Success!');
               console.log('delegation success', conf);
             } else {
@@ -216,7 +200,7 @@ export const CreateVault = () => {
         const batch = await Tezos.wallet.batch().withContractCall(vaultContract.methods.setDelegate())
         const op = await batch.send()
         const _confirm = op.confirmation().then((conf) => {
-          if(conf.completed == true){
+          if(conf.completed === true){
             setUserMessage('Undelegation Success!');
           } else {
             setUserMessage('Undelegation Failed!');
@@ -235,16 +219,16 @@ export const CreateVault = () => {
         let expiration = await new Date(unlockTime)
         let diff = (expiration - today)
         if(diff < 0 ){
-          console.log('expired', diff )
+          //console.log('expired', diff )
           let exp = (diff/one_day).toFixed(2)
           setRemainingTime('Vault Unlocked !')
         } else if(diff > 0){
-          console.log('not expired', diff)
+          //console.log('not expired', diff)
           let exp = (diff/one_day).toFixed(2)
           let msg = exp.toString() + ' days'
           setRemainingTime(msg)
         } else {
-          console.log('errors')
+          console.log('Error calculating unlock time...')
         }    
       }
     } catch(err){
@@ -265,7 +249,7 @@ export const CreateVault = () => {
         .withContractCall(vaultContract.methods.withdrawAll())
         const op = await batch.send()
         await op.confirmation().then((conf) => {
-          if(conf.completed == true){
+          if(conf.completed === true){
             console.log('withdrawal confirmed :', conf)
             setUserMessage('Withdraw Success!');
             setVault(null)
@@ -283,7 +267,7 @@ export const CreateVault = () => {
         .withContractCall(vaultContract.methods.withdrawAllWithPenalty())
         const op = await batch.send()
         await op.confirmation().then(async (conf) => {
-          if(conf.completed == true){
+          if(conf.completed === true){
             setUserMessage('Withdrawal with penalty complete!');
 
           } else {

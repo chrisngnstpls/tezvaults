@@ -11,7 +11,7 @@ export const InfoTable = (props) => {
             <Table sx={{ minWidth: 650 }} size="small" stickyHeader aria-label="sticky table">
                 <TableHead>
                     <TableRow>
-                    <TableCell align='center' id='vault' colSpan={5}><Typography variant="h6" component='h5'> Vault : <a target='_blank' href={linkOut}>{props.name}</a></Typography></TableCell>
+                    <TableCell align='center' id='vault' colSpan={5}><Typography variant="h6" component='h5'> Vault : <a target='_blank' rel="noreferrer" href={linkOut}>{props.name}</a></Typography></TableCell>
                     </TableRow>
                     <TableRow>
                         <TableCell>Vault Balance</TableCell>
