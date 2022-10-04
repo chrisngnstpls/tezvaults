@@ -4,10 +4,11 @@ import useBeacon, { contractAddress } from "../hooks/useBeacon";
 import { Button } from "./Button";
 
 import { validateAddress } from "@taquito/utils"
-import { Divider, Typography, Card, CardActions, CardContent, Table, TableBody, TableCell,TableContainer, TableHead,TableRow, Paper, Grid, Unstable_Grid2,Box } from "@mui/material";
+import { Divider, Typography, Card, CardActions, CardContent, Grid, Box } from "@mui/material";
 import { InfoTable } from "./InfoTable";
 import { FirstTime } from "./FirstTime";
 import { Topbar } from "./Topbar";
+import { LandingCard } from "./LandingCard";
 import axios from "axios";
 import MessageBar  from "./MessageBar";
 
@@ -384,8 +385,8 @@ export const CreateVault = () => {
           />
           <Divider />
           <Box sx={{flexGrow:1}}>
-          <Grid style={{padding:'10px'}} container spacing={1}>
-            <Grid item xs={4}>
+          <Grid style={{padding:'10px'}} container alignItems='center' spacing={2}>
+            <Grid item sm={6} lg={4} xs={8}>
             <div>
             <Card sx={{minWidth:250, minHeight:150}}>
             <CardContent>
@@ -417,9 +418,9 @@ export const CreateVault = () => {
             </Card>            
             </div>
           </Grid>
-          <Grid item xs={4}>
+          <Grid item sm={6} lg={4} xs={8}>
             <div>
-              <Card sx={{minWidth:250}}>
+              <Card sx={{minWidth:250 , minHeight:150}}>
               <CardContent>
                 <Typography sx={{fontSize:14}} color="text.secondary" gutterBottom>
                   Delegate
@@ -449,9 +450,9 @@ export const CreateVault = () => {
             
             </div>
           </Grid>
-          <Grid item xs={4}>
+          <Grid item sm={6} lg={4} xs={8}>
             <div>
-            <Card sx={{minWidth:250}}>
+            <Card sx={{minWidth:250 , minHeight:150}}>
             <CardContent>
               <Typography sx={{fontSize:14}} color="text.secondary" gutterBottom>
                 Claim Vault Resta
@@ -475,9 +476,9 @@ export const CreateVault = () => {
             
             </div>
           </Grid>
-          <Grid item xs={4}>
+          <Grid item sm={6} lg={4} xs={8}>
             <div>
-            <Card sx={{minWidth:250}}>
+            <Card sx={{minWidth:250 , minHeight:150}}>
             <CardContent>
               <Typography sx={{fontSize:14}} color="text.secondary" gutterBottom>
                 Withdraw vault
@@ -517,7 +518,7 @@ export const CreateVault = () => {
   } else {
     return (
       <section>
-        <div>Do logins plz</div>
+        <LandingCard/>
       </section>
     )
 
