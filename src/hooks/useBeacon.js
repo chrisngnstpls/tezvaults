@@ -37,7 +37,7 @@ import { MichelCodecPacker, MichelsonMap, TezosToolkit } from "@taquito/taquito"
 //     rpcBaseURL: "	https://rpc.ghostnet.teztnets.xyz"
 // };
 // KATHMANDUNET
-export const contractAddress = process.env.REACT_APP_MANAGER_CONTRACT_KATHMANDUNET || "KT1Gv2sLwUk1ubP746n5BNKyexZP5RUUaS7P";
+export const contractAddress = process.env.REACT_APP_MANAGER_CONTRACT_KATHMANDUNET || "KT1MucngaoxVvEZnEwCFRmfYHy222KpKYwyb";
 
 const DEFAULT_NETWORK = {
     id: "kathmandunet",
@@ -67,7 +67,7 @@ class LambdaViewSigner {
 }
 
 const options = {
-  name: "Madfish Vesting",
+  name: "tezVaults future of money",
   iconUrl: "https://tezostaquito.io/img/favicon.png",
 };
 
