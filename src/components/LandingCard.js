@@ -21,8 +21,7 @@ export const LandingCard = () => {
                         tezVaults
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
-                        Welcome to the the amazing financial instruments of
-                        supreme leaders. Please log in and gib mony
+                        Please connect your wallet. 
                     </Typography>
                 </CardContent>
             </Card>
